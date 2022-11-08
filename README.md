@@ -16,5 +16,5 @@ For Windows:
 Download the file "gravity_simulator.exe", and run it. 
 Every time it is executed, it starts out with random values for all particles. 
 Press 'q' to exit. 
-Windows may show warning message saying "Windows protected your PC", in this case, click on 'more options' and 'run anyway'. 
+Windows may show warning message saying "Windows protected your PC", in this case, click on 'more info' and 'run anyway'. 
 Its safe, don't worry :)
