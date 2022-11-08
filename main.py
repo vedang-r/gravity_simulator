@@ -25,7 +25,7 @@ class Particle:
 simulator_speed = 30
 time_coefficient = 1
 mass_coefficient = 1
-collision_coefficient = 0.049
+collision_coefficient = 0.06
 pi = math.pi
 origin = [0, 0]
 dt = 1 * time_coefficient / simulator_speed 
@@ -41,44 +41,35 @@ particle_array = []
 for i in range(numobjects):
     particle_array.append(Particle(random.randrange(50, 300), random.randrange(100, 900), random.randrange(100, 900), random.randrange(-5, 5) * 0.1, random.randrange(-5, 5) * 0.1)) # random.randrange(-5, 5) * 0.1, random.randrange(-5, 5) * 0.1
 
-# particle_array.append(Particle(200, 500, 400, 0.5, 0.5))
-# particle_array.append(Particle(250, 500, 600, -0.5, -0.5))
-# particle_array.append(Particle(200, 200, 500, 0.5, 0.5))
-# particle_array.append(Particle(200, 700, 500, -0.1, -0.25))
-# particle_array.append(Particle(400, 800, 100, -0.1, 0.25))
-
 # Pygame Values
 box_len = 1000
 box_height = 1000
-particle_color = (0, 255, 0) # green
+particle_color = (36, 218, 255) # sky blue
 background_color = (0, 0, 0) # black
 timer = pygame.time.Clock()
 surface = pygame.display.set_mode((box_len, box_height))
 display_style = pygame.font.SysFont("agencyfb", 30, "italic")
 
-def display_msg(msg, colr):
-    mssg = display_style.render(msg, True, colr)
-    surface.blit(mssg, [box_len / 6, box_height / 3])
-    
-def average(x, y):
-    avg = (x + y) / 2
-    return avg
-   
+# Functions
+
 def velocity_calculate(current_particle, other_particle):
     old_velocity = np.array(current_particle.velocity)
-    magnitude = (gravitational_constant * other_particle.mass * mass_coefficient / math.dist(current_particle.position, other_particle.position) ** 2)
-    direction = (np.array(np.array(current_particle.position) - np.array(other_particle.position)) / math.dist(current_particle.position, other_particle.position)) * -1
-    new_velocity = old_velocity + magnitude * direction
+    magnitude = (gravitational_constant * other_particle.mass * mass_coefficient / math.dist(current_particle.position, other_particle.position) ** 2) # Essentially Gm/r^2
+    direction = (np.array(np.array(current_particle.position) - np.array(other_particle.position)) / math.dist(current_particle.position, other_particle.position)) * -1 # Unit vector in the direction of other particle
+    new_velocity = old_velocity + magnitude * direction # Calculating new velocity
     return new_velocity
 
 def collision_detect(particle1, particle2):
-    if math.dist(particle1.position, particle2.position) < (particle1.mass + particle2.mass) * collision_coefficient:
+    if math.dist(particle1.position, particle2.position) < (particle1.mass + particle2.mass) * collision_coefficient: # collision_coefficient determines how close the particles should be to count as a collision
         return True
     else:
         return False
+    
+def average(x, y): # avg of 2 values
+    avg = (x + y) / 2
+    return avg
 
 def combine_particles(particle1, particle2):
-    # new_particle_velocity = np.array(np.array(particle1.momentum) + np.array(particle2.momentum)) / (particle1.mass + particle2.mass)
     new_particle_velocity = (np.array(particle1.velocity) * particle1.mass + np.array(particle2.velocity) * particle2.mass) / (2 * (particle1.mass + particle2.mass))
     new_particle = Particle(particle1.mass + particle2.mass, average(particle1.position[0], particle2.position[0]), average(particle1.position[1], particle2.position[1]), new_particle_velocity[0], new_particle_velocity[1])
     return new_particle
@@ -89,11 +80,10 @@ def start_simulation():
     velocity_sum = np.array([0, 0])
     collision_count = int(0)
     object_count = numobjects
-    particle_draw_list = []
 
     while not stop_simulation:
         
-        for event in pygame.event.get():
+        for event in pygame.event.get(): # if key 'q' is pressed, simulation will stop next tick
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         stop_simulation = True
@@ -125,10 +115,36 @@ def start_simulation():
                     collision_count = 0
                 particle_array[i].position = particle_array[i].position + velocity_sum
                 pygame.draw.circle(surface, particle_color, particle_array[i].position, particle_array[i].mass/12)
-        
-        
-        
+            
         pygame.display.update()
         timer.tick(simulator_speed)
+        
+        """
+        PSEUDO CODE:
+        
+        for every particle in the list of all particles(i):
+            if particle is valid:
+                for every other particle(j):
+                    if particle is valid:
+                        if the two particles are the same (i == j), pass
+                        
+                        elif collision is detected, combine particles
+                        
+                        else calculate new velocity for particle(i)
+            
+            use velocity to calculate new position, and update attribute position of that particle
+            draw the particle
+        
+        # The above for loop loops over all particles in the simulator, and compares each one to every other particle in the simulator.
+        # As long as both particles are valid and not the same particle, it checks if they are colliding and runs the collision algorithm if they do.
+        # If they are not colliding means that their gravity is acting on each other. So per tick, it calculates the velocity and position change per differential of time.
+        # Draws the particle after new position is calculated.
+            
+        update the screen
+        wait until next tick
+        
+        # By default this loop runs 30 times a second
+        
+        """
         
 start_simulation()
