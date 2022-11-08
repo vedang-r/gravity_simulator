@@ -13,3 +13,6 @@ Of course the simulation cannot be infinitely accurate since i can only calculat
 
 # Running the .exe file
 Every time it is executed, it starts out with random values for all particles
+Press 'q' to exit
+Windows may show warning message saying "Windows protected your PC", in this case, click on 'more options' and 'run anyway'
+Its safe, don't worry :)
