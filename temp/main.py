@@ -99,14 +99,14 @@ def start_simulation():
             for j in range(object_count): # other particle
                 if i == j: # current particle is not other particle
                     pass
-                # elif collision_detect(particle_array[i], particle_array[j]) == True:
-                #     # new_particle = Particle(particle_array[i].mass + particle_array[j].mass, average(particle_array[i].position[0], particle_array[j].position[0]), average(particle_array[i].position[1], particle_array[j].position[1]))
-                #     new_particle = combine_particles(particle_array[i], particle_array[j])
-                #     particle_array[i].mass = 0
-                #     particle_array[j].mass = 0
-                #     particle_array.append(new_particle)
-                #     collision_count += 1
-                #     pass
+                elif collision_detect(particle_array[i], particle_array[j]) == True:
+                    # new_particle = Particle(particle_array[i].mass + particle_array[j].mass, average(particle_array[i].position[0], particle_array[j].position[0]), average(particle_array[i].position[1], particle_array[j].position[1]))
+                    new_particle = combine_particles(particle_array[i], particle_array[j])
+                    particle_array[i].mass = 0
+                    particle_array[j].mass = 0
+                    particle_array.append(new_particle)
+                    collision_count += 1
+                    pass
                 else:
                     new_velocity = np.array(velocity_calculate(particle_array[i], particle_array[j]))
                     velocity_sum = velocity_sum + new_velocity

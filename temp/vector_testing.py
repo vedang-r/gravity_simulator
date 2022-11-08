@@ -96,27 +96,32 @@ def start_simulation():
         for i in range(object_count): # current particle
             
             velocity_sum = np.array([0, 0])
-            for j in range(object_count): # other particle
-                if i == j: # current particle is not other particle
-                    pass
-                # elif collision_detect(particle_array[i], particle_array[j]) == True:
-                #     # new_particle = Particle(particle_array[i].mass + particle_array[j].mass, average(particle_array[i].position[0], particle_array[j].position[0]), average(particle_array[i].position[1], particle_array[j].position[1]))
-                #     new_particle = combine_particles(particle_array[i], particle_array[j])
-                #     particle_array[i].mass = 0
-                #     particle_array[j].mass = 0
-                #     particle_array.append(new_particle)
-                #     collision_count += 1
-                #     pass
-                else:
-                    new_velocity = np.array(velocity_calculate(particle_array[i], particle_array[j]))
-                    velocity_sum = velocity_sum + new_velocity
-                    particle_array[i].velocity = new_velocity
-            particle_array[i].position = particle_array[i].position + velocity_sum
-            if collision_count > 0:
-                object_count = object_count + 1
-                collision_count = 0
-            particle_array[i].position = particle_array[i].position + velocity_sum
-            pygame.draw.circle(surface, particle_color, particle_array[i].position, particle_array[i].mass/10)
+            if particle_array[i].mass == 0:
+                pass
+            else:
+                for j in range(object_count): # other particle
+                    if i == j: # current particle is not other particle
+                        pass
+                    elif collision_detect(particle_array[i], particle_array[j]) == True:
+                        # new_particle = Particle(particle_array[i].mass + particle_array[j].mass, average(particle_array[i].position[0], particle_array[j].position[0]), average(particle_array[i].position[1], particle_array[j].position[1]))
+                        new_particle = combine_particles(particle_array[i], particle_array[j])
+                        particle_array[i].mass = 0
+                        particle_array[j].mass = 0
+                        particle_array.append(new_particle)
+                        collision_count += 1
+                        pass
+                    else:
+                        new_velocity = np.array(velocity_calculate(particle_array[i], particle_array[j]))
+                        velocity_sum = velocity_sum + new_velocity
+                        particle_array[i].velocity = new_velocity
+
+                particle_array[i].position = particle_array[i].position + velocity_sum
+                if collision_count > 0:
+                    object_count = object_count + 1
+                    collision_count = 0
+                particle_array[i].position = particle_array[i].position + velocity_sum
+
+                pygame.draw.circle(surface, particle_color, particle_array[i].position, particle_array[i].mass/10)
         
         pygame.display.update()
         timer.tick(simulator_speed)
