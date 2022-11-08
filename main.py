@@ -19,12 +19,13 @@ class Particle:
         self.velocity.append(float(velocityX))
         self.velocity.append(float(velocityY))
         self.momentum = self.mass * np.array(self.velocity)
+        self.valid = True
 
 # Mathematical and physical values
 simulator_speed = 30
 time_coefficient = 1
 mass_coefficient = 1
-collision_coefficient = 1
+collision_coefficient = 0.049
 pi = math.pi
 origin = [0, 0]
 dt = 1 * time_coefficient / simulator_speed 
@@ -36,8 +37,15 @@ numobjects = 5
 particle_array = []
 
 # assigning random values to range(numobjects) different particles
+
 for i in range(numobjects):
-    particle_array.append(Particle(random.randrange(50, 400), random.randrange(100, 900), random.randrange(100, 900), 0, 0)) # random.randrange(-10, 10), random.randrange(-10, 10)
+    particle_array.append(Particle(random.randrange(50, 300), random.randrange(100, 900), random.randrange(100, 900), random.randrange(-5, 5) * 0.1, random.randrange(-5, 5) * 0.1)) # random.randrange(-5, 5) * 0.1, random.randrange(-5, 5) * 0.1
+
+# particle_array.append(Particle(200, 500, 400, 0.5, 0.5))
+# particle_array.append(Particle(250, 500, 600, -0.5, -0.5))
+# particle_array.append(Particle(200, 200, 500, 0.5, 0.5))
+# particle_array.append(Particle(200, 700, 500, -0.1, -0.25))
+# particle_array.append(Particle(400, 800, 100, -0.1, 0.25))
 
 # Pygame Values
 box_len = 1000
@@ -70,7 +78,8 @@ def collision_detect(particle1, particle2):
         return False
 
 def combine_particles(particle1, particle2):
-    new_particle_velocity = np.array(np.array(particle1.momentum) + np.array(particle2.momentum)) / (particle1.mass + particle2.mass)
+    # new_particle_velocity = np.array(np.array(particle1.momentum) + np.array(particle2.momentum)) / (particle1.mass + particle2.mass)
+    new_particle_velocity = (np.array(particle1.velocity) * particle1.mass + np.array(particle2.velocity) * particle2.mass) / (2 * (particle1.mass + particle2.mass))
     new_particle = Particle(particle1.mass + particle2.mass, average(particle1.position[0], particle2.position[0]), average(particle1.position[1], particle2.position[1]), new_particle_velocity[0], new_particle_velocity[1])
     return new_particle
 
@@ -80,6 +89,7 @@ def start_simulation():
     velocity_sum = np.array([0, 0])
     collision_count = int(0)
     object_count = numobjects
+    particle_draw_list = []
 
     while not stop_simulation:
         
@@ -96,27 +106,27 @@ def start_simulation():
         for i in range(object_count): # current particle
             
             velocity_sum = np.array([0, 0])
-            for j in range(object_count): # other particle
-                if i == j: # current particle is not other particle
-                    pass
-                # elif collision_detect(particle_array[i], particle_array[j]) == True:
-                #     # new_particle = Particle(particle_array[i].mass + particle_array[j].mass, average(particle_array[i].position[0], particle_array[j].position[0]), average(particle_array[i].position[1], particle_array[j].position[1]))
-                #     new_particle = combine_particles(particle_array[i], particle_array[j])
-                #     particle_array[i].mass = 0
-                #     particle_array[j].mass = 0
-                #     particle_array.append(new_particle)
-                #     collision_count += 1
-                #     pass
-                else:
-                    new_velocity = np.array(velocity_calculate(particle_array[i], particle_array[j]))
-                    velocity_sum = velocity_sum + new_velocity
-                    particle_array[i].velocity = new_velocity
-            particle_array[i].position = particle_array[i].position + velocity_sum
-            if collision_count > 0:
-                object_count = object_count + 1
-                collision_count = 0
-            particle_array[i].position = particle_array[i].position + velocity_sum
-            pygame.draw.circle(surface, particle_color, particle_array[i].position, particle_array[i].mass/10)
+            if particle_array[i].valid == True:
+                for j in range(object_count): # other particle
+                    if particle_array[j].valid == True:
+                        if i == j: # current particle is not other particle
+                            pass
+                        elif collision_detect(particle_array[i], particle_array[j]) == True:
+                            particle_array[i] = combine_particles(particle_array[i], particle_array[j])
+                            particle_array[j].valid = False
+                            pass
+                        else:
+                            new_velocity = np.array(velocity_calculate(particle_array[i], particle_array[j]))
+                            velocity_sum = velocity_sum + new_velocity
+                            particle_array[i].velocity = new_velocity
+                particle_array[i].position = particle_array[i].position + velocity_sum
+                if collision_count > 0:
+                    object_count = object_count + 1
+                    collision_count = 0
+                particle_array[i].position = particle_array[i].position + velocity_sum
+                pygame.draw.circle(surface, particle_color, particle_array[i].position, particle_array[i].mass/12)
+        
+        
         
         pygame.display.update()
         timer.tick(simulator_speed)
