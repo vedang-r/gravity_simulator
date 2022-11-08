@@ -30,7 +30,7 @@ pi = math.pi
 origin = [0, 0]
 dt = 1 * time_coefficient / simulator_speed 
 # dt = 1
-gravitational_constant = 1
+gravitational_constant = 1.2
 
 # temp values
 numobjects = 5
