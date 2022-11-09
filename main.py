@@ -30,7 +30,7 @@ pi = math.pi
 origin = [0, 0]
 dt = 1 * time_coefficient / simulator_speed 
 # dt = 1
-gravitational_constant = 1.2
+gravitational_constant = 1.5
 
 # temp values
 numobjects = 5
@@ -78,7 +78,6 @@ def start_simulation():
     
     stop_simulation = False
     velocity_sum = np.array([0, 0])
-    collision_count = int(0)
     object_count = numobjects
 
     while not stop_simulation:
@@ -101,19 +100,16 @@ def start_simulation():
                     if particle_array[j].valid == True:
                         if i == j: # current particle is not other particle
                             pass
-                        elif collision_detect(particle_array[i], particle_array[j]) == True:
+                        elif collision_detect(particle_array[i], particle_array[j]) == True: # If collision is detected
                             particle_array[i] = combine_particles(particle_array[i], particle_array[j])
                             particle_array[j].valid = False
                             pass
-                        else:
+                        else: # Satisfies all conditions for gravity to take effect
                             new_velocity = np.array(velocity_calculate(particle_array[i], particle_array[j]))
                             velocity_sum = velocity_sum + new_velocity
                             particle_array[i].velocity = new_velocity
-                particle_array[i].position = particle_array[i].position + velocity_sum
-                if collision_count > 0:
-                    object_count = object_count + 1
-                    collision_count = 0
-                particle_array[i].position = particle_array[i].position + velocity_sum
+                particle_array[i].position = particle_array[i].position + velocity_sum # adds the new position and updates current position
+                
                 pygame.draw.circle(surface, particle_color, particle_array[i].position, particle_array[i].mass/12)
             
         pygame.display.update()
