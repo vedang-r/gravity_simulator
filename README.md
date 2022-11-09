@@ -2,14 +2,15 @@
 
 Author -Vedang Ratnaparkhi
 
-Newtonian gravity for n particles in a system.
-Calculated by grid simulation method and vector operations.
-
-The math used is newton's gravitational vector formula differentiated with time.
-Runs a loop per dt to calculate forces and consequently the position change.
-
-Of course the simulation cannot be infinitely accurate since i can only calculate for a finite dt, but the variable dt can be changed for more accuracy.
-(Default dt = 1/30)
+This gravity simulator is coded in Python 3.9.7, using both procedural and object oriented methods.
+The particles are a class, with attributes mass, position, velocity, and momentum (calculated using the mass and velocity).
+All the vector quantities are stored and used as ordered arrays with the x and y coordinates.
+The core structure of the simulation based on a 2 dimensional grid in a coordinate system.
+The magnitude and direction of velocity is defined as a vector with
+one point, assuming the first point is the origin. 
+Gravity is calculated by differentiating Newton's gravitational formula, and calculating gravitational force for each particle with every other particle per
+tick 'dt'. This loop runs multiple times a second, the smaller the dt the greater the precision.
+This simulator can simulate gravity for any number of objects.
 
 # Running the .exe file 
 For Windows: 
