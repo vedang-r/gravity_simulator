@@ -2,6 +2,10 @@
 
 Author -Vedang Ratnaparkhi
 
+Changing the variable 'numobjects' will change the total particles in the system.
+
+# Description:
+
 This gravity simulator is coded in Python 3.9.7, using both procedural and object oriented methods.
 The particles are a class, with attributes mass, position, velocity, and momentum (calculated using the mass and velocity).
 All the vector quantities are stored and used as ordered arrays with the x and y coordinates.
